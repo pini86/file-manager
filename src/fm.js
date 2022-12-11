@@ -4,6 +4,7 @@ import path from "path";
 import * as operatingSystem from "./operatingSystem.js";
 import { splitCommand, splitPaths } from "./utility.js";
 import { incorrectInput, incorrectCommand } from "./errorsHandler.js";
+import { getHash } from "./hash.js";
 
 const rl = readline.createInterface({
   input,
@@ -13,7 +14,7 @@ const rl = readline.createInterface({
 const fm = () => {
   const USER = process.argv[process.argv.indexOf("--user-name") + 1];
   let currentDir = operatingSystem.getHomeDir();
- 
+
   if (!process.argv.includes("--user-name")) {
     console.log("'--user-name' shuld be exist");
     process.exit(0);
@@ -48,6 +49,17 @@ const fm = () => {
         }
         rl.prompt();
         break;
+      case "hash":
+        getHash(currentDir, comandContent, rl);
+        break;
+      case "compress":
+        compress(splitPaths(currentDir, comandContent));
+        rl.prompt();
+        break;
+      case "decompress":
+        decompress(splitPaths(currentDir, comandContent));
+        rl.prompt();
+        break;
 
       case "exit":
         process.exit(0);
@@ -60,7 +72,7 @@ const fm = () => {
 
   process.on("exit", (code) => {
     console.log(
-      `\x1b[35m\nThank you for using File Manager, ${USER}!\n\x1b[0m`
+      `\x1b[35m\nThank you for using File Manager, ${USER}, goodbye!\n\x1b[0m`
     );
   });
 };
