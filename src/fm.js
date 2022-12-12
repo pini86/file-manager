@@ -3,8 +3,16 @@ import * as readline from "readline";
 import path from "path";
 import * as operatingSystem from "./operatingSystem.js";
 import { splitCommand, splitPaths } from "./utility.js";
-import { incorrectInput, incorrectCommand } from "./errorsHandler.js";
+import { incorrectInput } from "./errorsHandler.js";
 import { getHash } from "./hash.js";
+import {
+  readFile,
+  createFile,
+  renameFile,
+  copyFile,
+  moveFile,
+  removeFile,
+} from "./fileCommand";
 
 const rl = readline.createInterface({
   input,
@@ -25,6 +33,53 @@ const fm = () => {
   rl.on("line", async (line) => {
     let [comandName, comandContent] = splitCommand(line);
     switch (comandName) {
+      case "up":
+        currentDir = nwd.up(currentDir);
+        rl.setPrompt(
+          `\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`
+        );
+        rl.prompt();
+        break;
+
+      case "cd":
+        currentDir = nwd.cd(currentDir, comandContent);
+        rl.setPrompt(
+          `\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`
+        );
+        rl.prompt();
+        break;
+
+      case "ls":
+        nwd.list(currentDir).then((list) => {
+          console.table(list);
+          rl.prompt();
+        });
+        break;
+
+      case "cat":
+        await readFile(currentDir, comandContent, rl);
+        break;
+
+      case "add":
+        await createFile(currentDir, comandContent, rl);
+        break;
+
+      case "rn":
+        await renameFile(splitPaths(currentDir, comandContent), rl);
+        break;
+
+      case "cp":
+        await copyFile(splitPaths(currentDir, comandContent), rl);
+        break;
+
+      case "mv":
+        await moveFile(splitPaths(currentDir, comandContent), rl);
+        break;
+
+      case "rm":
+        await removeFile(path.resolve(currentDir, comandContent), rl);
+        break;
+
       case "os":
         switch (comandContent) {
           case "--EOL":

@@ -1,4 +1,4 @@
-import fs from "fs";
+import { access, constants } from "fs";
 import path from "path";
 
 const splitCommand = (commandLine) => {
@@ -8,15 +8,19 @@ const splitCommand = (commandLine) => {
   return [commandName, splitted.join(" ")];
 };
 
-const splitPaths = (currentPath, paths) => {
+const splitPaths = async (currentPath, paths) => {
   paths = paths.split(" ");
   let src,
     dest,
     tempPath = [];
   paths.forEach((chunk) => {
     tempPath.push(chunk);
-    if (!src && fs.existsSync(path.resolve(currentPath, tempPath.join(" "))))
-      [src, tempPath] = [path.resolve(currentPath, tempPath.join(" ")), []];
+    const pathResolved = path.resolve(currentPath, tempPath.join(" "));
+    access(pathResolved, constants.F_OK, (err) => {
+      if (!err && !src) {
+        [src, tempPath] = [pathResolved, []];
+      }
+    });
   });
   dest = path.resolve(currentPath, tempPath.join(" "));
   return [src, dest];
