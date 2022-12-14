@@ -6,15 +6,22 @@ const up = (currentPath) => {
   return path.resolve(currentPath, "..");
 };
 
-const cd = (currentPath, additional) => {
+const cd = async (currentPath, additional) => {
   const newPath = path.resolve(currentPath, additional);
-  if (!fs.existsSync(newPath)) incorrectCommand("File or directory not found!");
-  else if (!fs.lstatSync(newPath).isDirectory())
+  try {
+    await fs.promises.access(newPath);
+  } catch {
+    incorrectCommand("Invalid path!");
+    return currentPath;
+  }
+  if (!(await fs.promises.stat(newPath)).isDirectory()) {
     incorrectCommand("Directory not found!");
-  return fs.existsSync(newPath) && fs.lstatSync(newPath).isDirectory()
-    ? newPath
-    : currentPath;
-};
+    return currentPath;
+  }
+
+  return newPath;
+ };
+
 
 const list = async (folder) => {
   const result = await fs.promises.readdir(folder, { withFileTypes: true });

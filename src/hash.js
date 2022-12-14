@@ -11,7 +11,7 @@ const getHash = async (currentDir, fileName, rl) => {
       console.log(hashFile);
     })
     .catch(() => {
-      incorrectCommand("File not find!");
+      incorrectCommand("File not found!");
     })
     .finally(() => {
       rl.prompt();

@@ -14,6 +14,7 @@ import {
   removeFile,
 } from "./fileCommand.js";
 import { up, cd, list } from "./nwd.js";
+import { helpPrint } from "./help.js";
 
 const rl = readline.createInterface({
   input,
@@ -27,13 +28,21 @@ const fm = () => {
   if (!process.argv.includes("--user-name")) {
     console.log("'--user-name' shuld be exist");
     process.exit(0);
-  } else console.log(`\x1b[35mWelcome to the File Manager, ${USER}!\n\x1b[0m`);
+  } else {
+    console.log(`\x1b[35mWelcome to the File Manager, ${USER}!\n\x1b[0m`);
+    console.log("Type 'help' to see command list.");
+  }
   rl.setPrompt(`\x1b[33mYou are currently in ${currentDir} >\n\x1b[0m`);
   rl.prompt();
 
   rl.on("line", async (line) => {
     let [comandName, comandContent] = splitCommand(line);
     switch (comandName) {
+      case "help":
+        helpPrint();
+        rl.prompt();
+        break;
+
       case "up":
         currentDir = up(currentDir);
         rl.setPrompt(`\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`);
@@ -41,13 +50,13 @@ const fm = () => {
         break;
 
       case "cd":
-        currentDir = cd(currentDir, comandContent);
+        currentDir = await cd(currentDir, comandContent);
         rl.setPrompt(`\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`);
         rl.prompt();
         break;
 
       case "ls":
-        list(currentDir);
+        await list(currentDir);
         rl.prompt();
         break;
 
