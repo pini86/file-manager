@@ -12,7 +12,8 @@ import {
   copyFile,
   moveFile,
   removeFile,
-} from "./fileCommand";
+} from "./fileCommand.js";
+import { up, cd, list } from "./nwd.js";
 
 const rl = readline.createInterface({
   input,
@@ -34,26 +35,20 @@ const fm = () => {
     let [comandName, comandContent] = splitCommand(line);
     switch (comandName) {
       case "up":
-        currentDir = nwd.up(currentDir);
-        rl.setPrompt(
-          `\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`
-        );
+        currentDir = up(currentDir);
+        rl.setPrompt(`\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`);
         rl.prompt();
         break;
 
       case "cd":
-        currentDir = nwd.cd(currentDir, comandContent);
-        rl.setPrompt(
-          `\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`
-        );
+        currentDir = cd(currentDir, comandContent);
+        rl.setPrompt(`\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`);
         rl.prompt();
         break;
 
       case "ls":
-        nwd.list(currentDir).then((list) => {
-          console.table(list);
-          rl.prompt();
-        });
+        list(currentDir);
+        rl.prompt();
         break;
 
       case "cat":
@@ -86,7 +81,7 @@ const fm = () => {
             console.log(operatingSystem.getOsInfo());
             break;
           case "--cpus":
-            console.log(operatingSystem.getCpus());
+            console.table(operatingSystem.getCpus());
             break;
           case "--homedir":
             console.log(operatingSystem.getHomeDir());
