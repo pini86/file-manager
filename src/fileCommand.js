@@ -3,15 +3,17 @@ import fsPromises from "fs/promises";
 import path from "path";
 import { incorrectCommand } from "./errorsHandler.js";
 
+const FNF = "File not found!";
+
 const readFile = async (currentPath, toRead, rl) => {
-  const readingStream = fs.ReadStream(
+  const readingStream = await fs.ReadStream(
     path.resolve(currentPath, toRead),
     "utf8"
   );
 
-  readingStream.on("data", (data) => process.stdout.write(data));
+  readingStream.on("data", (chunk) => console.log(chunk));
   readingStream.on("close", () => rl.prompt());
-  readingStream.on("error", () => incorrectCommand("File not found!"));
+  readingStream.on("error", () => incorrectCommand(FNF));
 };
 
 const createFile = async (currentPath, nameNewFile, rl) => {
@@ -27,13 +29,32 @@ const createFile = async (currentPath, nameNewFile, rl) => {
 const renameFile = async ([oldPath, newPath], rl) => {
   await fsPromises
     .rename(oldPath, newPath)
-    .catch(() => incorrectCommand("File not found!"))
+    .catch(() => incorrectCommand(FNF))
     .finally(() => rl.prompt());
 };
 
 const copyFile = async ([src, dest], rl = null) => {
-  if (!src) {
-    incorrectCommand("File not found!");
+  if (!src || !dest) {
+    incorrectCommand(FNF);
+    if (rl) {
+      rl.prompt();
+    }
+    return;
+  }
+
+  try {
+    await fs.promises.access(src);
+  } catch {
+    incorrectCommand(FNF);
+    if (rl) {
+      rl.prompt();
+    }
+    return;
+  }
+  const stats = await fsPromises.stat(src);
+
+  if (!stats.isFile()) {
+    incorrectCommand("This is folder!");
     if (rl) {
       rl.prompt();
     }
@@ -44,36 +65,46 @@ const copyFile = async ([src, dest], rl = null) => {
     await fs.promises.access(dest);
   } catch {
     await fs.promises.mkdir(dest);
-  }
+  } finally {
+    const readableStream = fs.ReadStream(src, "utf8");
+    readableStream.on("error", () => {
+      incorrectCommand(FNF);
+    });
 
-  const readableStream = fs.ReadStream(src, "utf8");
-  const writableStream = fs.WriteStream(path.resolve(dest, path.basename(src)));
+    const writableStream = fs.WriteStream(
+      path.resolve(dest, path.basename(src))
+    );
+    writableStream.on("error", () => {
+      incorrectCommand(FNF);
+    });
 
-  readableStream.on("error", () => incorrectCommand());
-  writableStream.on("error", () => incorrectCommand());
-
-  readableStream.pipe(writableStream);
-
-  if (rl) {
-    rl.prompt();
-  } else {
-    return true;
+    readableStream.pipe(writableStream);
+    if (rl) {
+      rl.prompt();
+    }
+    return;
   }
 };
 
 const moveFile = async ([src, dest], rl) => {
-  copy([src, dest])
-    .then((data) => {
-      if (data) remove(src);
-    })
-    .catch(() => incorrectCommand("File not found!"))
+  if (src === path.resolve(dest, path.basename(src))) {
+    incorrectCommand("File exists!");
+    if (rl) {
+      rl.prompt();
+    }
+    return;
+  }
+
+  copyFile([src, dest])
+    .then(() => removeFile(src))
+    .catch(() => incorrectCommand(FNF))
     .finally(() => rl.prompt());
 };
 
 const removeFile = async (src, rl = null) => {
   await fsPromises
     .rm(src)
-    .catch(() => incorrectCommand("File not found!"))
+    .catch(() => incorrectCommand(FNF))
     .finally(() => {
       if (rl) {
         rl.prompt();
