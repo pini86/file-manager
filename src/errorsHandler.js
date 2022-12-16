@@ -1,6 +1,8 @@
+import { colours } from "./colours.js";
+
 const incorrectInput = () => {
   try {
-    throw new Error("\x1b[31mInvalid input!\n\x1b[0m");
+    throw new Error(colours.fg.red + "Invalid input!\n" + colours.reset);
   } catch (error) {
     console.log(error.message);
   }
@@ -8,7 +10,9 @@ const incorrectInput = () => {
 
 const incorrectCommand = (message = "") => {
   try {
-    throw new Error(`\x1b[31mOperation failed! ${message}\n\x1b[0m`);
+    throw new Error(
+      colours.fg.red + `Operation failed! ${message}\n` + colours.reset
+    );
   } catch (error) {
     console.log(error.message);
   }

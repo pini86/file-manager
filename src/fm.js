@@ -16,6 +16,7 @@ import {
 import { up, cd, list } from "./nwd.js";
 import { helpPrint } from "./help.js";
 import { compress, decompress } from "./zip.js";
+import { colours } from "./colours.js";
 
 const rl = readline.createInterface({
   input,
@@ -27,13 +28,23 @@ const fm = () => {
   let currentDir = operatingSystem.getHomeDir();
 
   if (!process.argv.includes("--user-name") || !USER) {
-    console.log("\x1b[31m'--user-name' should be exist!\n\x1b[0m");
+    console.log(
+      colours.fg.red,
+      "'--user-name' should be exist!\n",
+      colours.reset
+    );
     process.exit(0);
   } else {
-    console.log(`\x1b[35mWelcome to the File Manager, ${USER}!\n\x1b[0m`);
+    console.log(
+      colours.fg.magenta,
+      `Welcome to the File Manager, ${USER}!\n`,
+      colours.reset
+    );
     console.log("Type 'help' to see command list.");
   }
-  rl.setPrompt(`\x1b[33mYou are currently in ${currentDir} >\n\x1b[0m`);
+  rl.setPrompt(
+    colours.fg.yellow + `You are currently in ${currentDir} >\n` + colours.reset
+  );
   rl.prompt();
 
   rl.on("line", async (line) => {
@@ -46,13 +57,21 @@ const fm = () => {
 
       case "up":
         currentDir = up(currentDir);
-        rl.setPrompt(`\x1b[33mYou are currently in ${currentDir} >\n\x1b[0m`);
+        rl.setPrompt(
+          colours.fg.yellow +
+            `You are currently in ${currentDir} >\n` +
+            colours.reset
+        );
         rl.prompt();
         break;
 
       case "cd":
         currentDir = await cd(currentDir, comandContent);
-        rl.setPrompt(`\x1b[33mYou are currently in ${currentDir} >\n\x1b[0m`);
+        rl.setPrompt(
+          colours.fg.yellow +
+            `You are currently in ${currentDir} >\n` +
+            colours.reset
+        );
         rl.prompt();
         break;
 
@@ -132,7 +151,9 @@ const fm = () => {
 
   process.on("exit", (code) => {
     console.log(
-      `\x1b[35m\nThank you for using File Manager, ${USER}, goodbye!\n\x1b[0m`
+      colours.fg.magenta,
+      `\nThank you for using File Manager, ${USER}, goodbye!\n`,
+      colours.reset
     );
   });
 };

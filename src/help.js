@@ -1,3 +1,5 @@
+import { colours } from "./colours.js";
+
 const HELP = [
   "List of operations :",
   "'up' - Go upper from current directory.",
@@ -21,7 +23,7 @@ const HELP = [
 
 const helpPrint = () => {
   HELP.forEach((item) => {
-    console.log(`\x1b[35m ${item}\n\x1b[0m`);
+    console.log(colours.fg.magenta, `${item}\n`, colours.reset);
   });
 };
 
