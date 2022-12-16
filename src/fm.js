@@ -140,7 +140,7 @@ const fm = () => {
         rl.prompt();
         break;
 
-      case "exit":
+      case ".exit":
         process.exit(0);
       default:
         incorrectInput();
