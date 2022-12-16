@@ -1,16 +1,16 @@
 const incorrectInput = () => {
   try {
-    throw new Error("Invalid input!");
+    throw new Error("\x1b[31mInvalid input!\n\x1b[0m");
   } catch (error) {
-    console.log("\x1b[31m%s\x1b[0m", error.message);
+    console.log(error.message);
   }
 };
 
 const incorrectCommand = (message = "") => {
   try {
-    throw new Error(`Operation failed! ${message}`);
+    throw new Error(`\x1b[31mOperation failed! ${message}\n\x1b[0m`);
   } catch (error) {
-    console.log("\x1b[31m%s\x1b[0m", error.message);
+    console.log(error.message);
   }
 };
 

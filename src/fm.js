@@ -15,6 +15,7 @@ import {
 } from "./fileCommand.js";
 import { up, cd, list } from "./nwd.js";
 import { helpPrint } from "./help.js";
+import { compress, decompress } from "./zip.js";
 
 const rl = readline.createInterface({
   input,
@@ -25,8 +26,8 @@ const fm = () => {
   const USER = process.argv[process.argv.indexOf("--user-name") + 1];
   let currentDir = operatingSystem.getHomeDir();
 
-  if (!process.argv.includes("--user-name")) {
-    console.log("'--user-name' shuld be exist");
+  if (!process.argv.includes("--user-name") || !USER) {
+    console.log("\x1b[31m'--user-name' should be exist!\n\x1b[0m");
     process.exit(0);
   } else {
     console.log(`\x1b[35mWelcome to the File Manager, ${USER}!\n\x1b[0m`);
@@ -45,13 +46,13 @@ const fm = () => {
 
       case "up":
         currentDir = up(currentDir);
-        rl.setPrompt(`\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`);
+        rl.setPrompt(`\x1b[33mYou are currently in ${currentDir} >\n\x1b[0m`);
         rl.prompt();
         break;
 
       case "cd":
         currentDir = await cd(currentDir, comandContent);
-        rl.setPrompt(`\x1b[36mYou are currently in ${currentDir} >\n\x1b[0m`);
+        rl.setPrompt(`\x1b[33mYou are currently in ${currentDir} >\n\x1b[0m`);
         rl.prompt();
         break;
 
@@ -109,14 +110,14 @@ const fm = () => {
         rl.prompt();
         break;
       case "hash":
-        getHash(currentDir, comandContent, rl);
+        await getHash(currentDir, comandContent, rl);
         break;
       case "compress":
-        compress(splitPaths(currentDir, comandContent));
+        await compress(splitPaths(currentDir, comandContent));
         rl.prompt();
         break;
       case "decompress":
-        decompress(splitPaths(currentDir, comandContent));
+        await decompress(splitPaths(currentDir, comandContent));
         rl.prompt();
         break;
 
