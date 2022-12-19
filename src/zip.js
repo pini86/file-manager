@@ -21,9 +21,19 @@ const compress = async ([pathSrc, pathDest]) => {
     incorrectCommand(FNF);
     return;
   }
-  const stats = await fsPromises.stat(pathSrc);
 
-  if (!stats.isFile()) {
+  try {
+    await fs.promises.access(pathDest);
+    const statsDest = await fsPromises.stat(pathDest);
+    if (statsDest.isDirectory()) {
+      incorrectCommand("This is folder!");
+      return;
+    }
+  } catch {}
+
+  const statsSrc = await fsPromises.stat(pathSrc);
+
+  if (!statsSrc.isFile()) {
     incorrectCommand("This is folder!");
     return;
   }
@@ -61,14 +71,24 @@ const decompress = async ([pathSrc, pathDest]) => {
     incorrectCommand(FNF);
     return;
   }
-  const stats = await fsPromises.stat(pathSrc);
 
-  if (!stats.isFile()) {
+  try {
+    await fs.promises.access(pathDest);
+    const statsDest = await fsPromises.stat(pathDest);
+    if (statsDest.isDirectory()) {
+      incorrectCommand("This is folder!");
+      return;
+    }
+  } catch {}
+
+  const statsSrc = await fsPromises.stat(pathSrc);
+  const nameDestDir = path.dirname(pathDest);
+
+  if (!statsSrc.isFile()) {
     incorrectCommand("This is folder!");
     return;
   }
 
-  const nameDestDir = path.dirname(pathDest);
   try {
     await fs.promises.access(nameDestDir);
   } catch {
@@ -82,7 +102,7 @@ const decompress = async ([pathSrc, pathDest]) => {
     try {
       await pipeline(srcStream, brotli, destStream);
     } catch (err) {
-      await fs.promises.rm(nameDestFile, { force: true });
+      await fs.promises.rm(nameDestFile);
       incorrectCommand("Decompress failed!");
       return;
     }
