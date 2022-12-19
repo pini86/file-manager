@@ -18,13 +18,13 @@ import { helpPrint } from "./help.js";
 import { compress, decompress } from "./zip.js";
 import { colours } from "./colours.js";
 
-const rl = readline.createInterface({
+const readLineInt = readline.createInterface({
   input,
   output,
 });
 
 const exitProg = () => {
-  console.log(colours.fg.red, "Error, '--username' should be exist!\n", colours.reset);
+  console.log(colours.fg.red, "Error, '--username' required!\n", colours.reset);
   process.exit(0);
 };
 
@@ -48,66 +48,66 @@ const fm = () => {
 
   let currentDir = operatingSystem.getHomeDir();
 
-  rl.setPrompt(
+  readLineInt.setPrompt(
     colours.fg.yellow + `You are currently in ${currentDir}\n` + colours.reset
   );
-  rl.prompt();
+  readLineInt.prompt();
 
-  rl.on("line", async (line) => {
+  readLineInt.on("line", async (line) => {
     let [comandName, comandContent] = splitCommand(line);
     switch (comandName) {
       case "help":
         helpPrint();
-        rl.prompt();
+        readLineInt.prompt();
         break;
 
       case "up":
         currentDir = up(currentDir);
-        rl.setPrompt(
+        readLineInt.setPrompt(
           colours.fg.yellow +
             `You are currently in ${currentDir}\n` +
             colours.reset
         );
-        rl.prompt();
+        readLineInt.prompt();
         break;
 
       case "cd":
         currentDir = await cd(currentDir, comandContent);
-        rl.setPrompt(
+        readLineInt.setPrompt(
           colours.fg.yellow +
             `You are currently in ${currentDir}\n` +
             colours.reset
         );
-        rl.prompt();
+        readLineInt.prompt();
         break;
 
       case "ls":
         await list(currentDir);
-        rl.prompt();
+        readLineInt.prompt();
         break;
 
       case "cat":
-        await readFile(currentDir, comandContent, rl);
+        await readFile(currentDir, comandContent, readLineInt);
         break;
 
       case "add":
-        await createFile(currentDir, comandContent, rl);
+        await createFile(currentDir, comandContent, readLineInt);
         break;
 
       case "rn":
-        await renameFile(splitPaths(currentDir, comandContent), rl);
+        await renameFile(splitPaths(currentDir, comandContent), readLineInt);
         break;
 
       case "cp":
-        await copyFile(splitPaths(currentDir, comandContent), rl);
+        await copyFile(splitPaths(currentDir, comandContent), readLineInt);
         break;
 
       case "mv":
-        await moveFile(splitPaths(currentDir, comandContent), rl);
+        await moveFile(splitPaths(currentDir, comandContent), readLineInt);
         break;
 
       case "rm":
-        await removeFile(path.resolve(currentDir, comandContent), rl);
+        await removeFile(path.resolve(currentDir, comandContent), readLineInt);
         break;
 
       case "os":
@@ -129,28 +129,28 @@ const fm = () => {
             break;
           default:
             incorrectInput();
-            rl.prompt();
+            readLineInt.prompt();
             break;
         }
-        rl.prompt();
+        readLineInt.prompt();
         break;
       case "hash":
-        await getHash(currentDir, comandContent, rl);
+        await getHash(currentDir, comandContent, readLineInt);
         break;
       case "compress":
         await compress(splitPaths(currentDir, comandContent));
-        rl.prompt();
+        readLineInt.prompt();
         break;
       case "decompress":
         await decompress(splitPaths(currentDir, comandContent));
-        rl.prompt();
+        readLineInt.prompt();
         break;
 
       case ".exit":
         process.exit(0);
       default:
         incorrectInput();
-        rl.prompt();
+        readLineInt.prompt();
         break;
     }
   });

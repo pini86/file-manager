@@ -17,8 +17,8 @@ const HELP = [
   "'os --username' - Get current system user name.",
   "'os --architecture' - Get CPU architecture for which Node.js binary.",
   "'hash path_to_file' - Calculate hash for file.",
-  "'compress path_to_file path_to_destination' - Compress file to destination folder, output file has added '.br' extension.",
-  "'decompress path_to_file path_to_destination' - Decompress file to destination folder, output file has removed '.br' extension.",
+  "'compress path_to_file path_to_destination' - Compress file.",
+  "'decompress path_to_file path_to_destination' - Decompress file.",
   "'.exit' - Exit from program.",
 ];
 

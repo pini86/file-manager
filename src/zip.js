@@ -28,13 +28,14 @@ const compress = async ([pathSrc, pathDest]) => {
     return;
   }
 
+  const nameDestDir = path.dirname(pathDest);
   try {
-    await fs.promises.access(pathDest);
+    await fs.promises.access(nameDestDir);
   } catch {
-    await fs.promises.mkdir(pathDest);
+    await fs.promises.mkdir(nameDestDir);
   } finally {
-    const nameDestFile = path.resolve(pathDest, `${path.basename(pathSrc)}.br`);
-    const srcStream = createReadStream(pathSrc);
+    const nameDestFile = path.resolve(pathDest);
+    const srcStream = createReadStream(path.resolve(pathSrc));
     const destStream = createWriteStream(nameDestFile);
     const brotli = zlib.createBrotliCompress();
 
@@ -67,22 +68,21 @@ const decompress = async ([pathSrc, pathDest]) => {
     return;
   }
 
+  const nameDestDir = path.dirname(pathDest);
   try {
-    await fs.promises.access(pathDest);
+    await fs.promises.access(nameDestDir);
   } catch {
-    await fs.promises.mkdir(pathDest);
+    await fs.promises.mkdir(nameDestDir);
   } finally {
-    const nameDestFile = path.resolve(
-      pathDest,
-      `${path.basename(pathSrc, path.extname(pathSrc))}`
-    );
-    const srcStream = createReadStream(pathSrc);
+    const nameDestFile = path.resolve(pathDest);
+    const srcStream = createReadStream(path.resolve(pathSrc));
     const destStream = createWriteStream(nameDestFile);
     const brotli = zlib.createBrotliDecompress();
 
     try {
       await pipeline(srcStream, brotli, destStream);
     } catch (err) {
+      await fs.promises.rm(nameDestFile, { force: true });
       incorrectCommand("Decompress failed!");
       return;
     }
