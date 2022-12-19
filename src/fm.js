@@ -23,17 +23,20 @@ const rl = readline.createInterface({
   output,
 });
 
-const fm = () => {
-  const USER = process.argv[process.argv.indexOf("--user-name") + 1];
-  let currentDir = operatingSystem.getHomeDir();
+const exitProg = () => {
+  console.log(colours.fg.red, "Error, '--username' should be exist!\n", colours.reset);
+  process.exit(0);
+};
 
-  if (!process.argv.includes("--user-name") || !USER) {
-    console.log(
-      colours.fg.red,
-      "'--user-name' should be exist!\n",
-      colours.reset
-    );
-    process.exit(0);
+const fm = () => {
+  if (process.argv.length < 3) {
+    exitProg();
+  }
+
+  const USER = process.argv[2].split("--username=")[1];
+
+  if (!USER) {
+    exitProg();
   } else {
     console.log(
       colours.fg.magenta,
@@ -42,8 +45,11 @@ const fm = () => {
     );
     console.log("Type 'help' to see command list.");
   }
+
+  let currentDir = operatingSystem.getHomeDir();
+
   rl.setPrompt(
-    colours.fg.yellow + `You are currently in ${currentDir} >\n` + colours.reset
+    colours.fg.yellow + `You are currently in ${currentDir}\n` + colours.reset
   );
   rl.prompt();
 
@@ -59,7 +65,7 @@ const fm = () => {
         currentDir = up(currentDir);
         rl.setPrompt(
           colours.fg.yellow +
-            `You are currently in ${currentDir} >\n` +
+            `You are currently in ${currentDir}\n` +
             colours.reset
         );
         rl.prompt();
@@ -69,7 +75,7 @@ const fm = () => {
         currentDir = await cd(currentDir, comandContent);
         rl.setPrompt(
           colours.fg.yellow +
-            `You are currently in ${currentDir} >\n` +
+            `You are currently in ${currentDir}\n` +
             colours.reset
         );
         rl.prompt();

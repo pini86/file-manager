@@ -19,6 +19,7 @@ const HELP = [
   "'hash path_to_file' - Calculate hash for file.",
   "'compress path_to_file path_to_destination' - Compress file, destination file has added .br extension.",
   "'decompress path_to_file path_to_destination' - Decompress file, destination file has removed .br extension.",
+  "'.exit' - Exit from program.",
 ];
 
 const helpPrint = () => {

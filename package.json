@@ -5,8 +5,8 @@
   "type": "module",
   "main": "fm.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/fm"
+    "test": "node src/fm.js --username=TestUser",
+    "start": "node src/fm.js"
   },
   "author": "Mikhail Druzhinin",
   "license": "ISC"
