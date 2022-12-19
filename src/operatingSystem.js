@@ -5,7 +5,9 @@ const getOsInfo = function () {
 };
 
 const getCpus = function () {
-  return os.cpus();
+  return os.cpus().map((cpuItem) => {
+    return { model: cpuItem.model, speed: cpuItem.speed };
+  });
 };
 
 const getHomeDir = function () {
