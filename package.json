@@ -1,0 +1,13 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "file-manager",
+  "type": "module",
+  "main": "fm.js",
+  "scripts": {
+    "test": "node src/fm.js --username=TestUser",
+    "start": "node src/fm.js"
+  },
+  "author": "Mikhail Druzhinin",
+  "license": "ISC"
+}
