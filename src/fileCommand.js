@@ -78,7 +78,7 @@ const copyFile = async ([src, dest], rl = null) => {
       incorrectCommand(FNF);
     });
 
-    readableStream.pipe(writableStream);
+    await readableStream.pipe(writableStream);
     if (rl) {
       rl.prompt();
     }
